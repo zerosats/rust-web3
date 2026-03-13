@@ -4,7 +4,7 @@ use crate::{
     api::Namespace,
     helpers::{self, CallFuture},
     types::{
-        Address, Block, BlockHeader, BlockId, BlockNumber, Bytes, CallRequest, FeeHistory, Filter, Index, Log, Proof,
+        Address, Block, BlockHeader, BlockId, BlockNumber, Bytes, CallRequest, RollupGasEstimate, FeeHistory, Filter, Index, Log, Proof,
         SyncState, Transaction, TransactionId, TransactionReceipt, TransactionRequest, Work, H256, H520, H64, U256,
         U64,
     },
@@ -87,7 +87,7 @@ impl<T: Transport> Eth<T> {
     /// Returns l1FeeRate (hex string), which is “wei per byte of state diff” for the block in base
     /// layer. This lets you compute the L1 rollup fee directly as L1Fee = l1FeeRate * diffSize..
     /// see https://gist.github.com/otaliptus/a54c9374bf32b874fb8ce4061dc66e01
-    pub fn estimate_diff_size(&self, req: CallRequest, block: Option<BlockNumber>) -> CallFuture<U256, T::Out> {
+    pub fn estimate_diff_size(&self, req: CallRequest, block: Option<BlockNumber>) -> CallFuture<RollupGasEstimate, T::Out> {
         let req = helpers::serialize(&req);
 
         let args = match block {

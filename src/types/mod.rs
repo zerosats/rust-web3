@@ -3,6 +3,7 @@
 mod block;
 mod bytes;
 mod bytes_array;
+mod fee;
 mod fee_history;
 mod log;
 mod parity_peers;
@@ -24,6 +25,7 @@ pub use self::{
     block::{Block, BlockHeader, BlockId, BlockNumber},
     bytes::Bytes,
     bytes_array::BytesArray,
+    fee::RollupGasEstimate,
     fee_history::FeeHistory,
     log::{Filter, FilterBuilder, Log},
     parity_peers::{
