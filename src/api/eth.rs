@@ -84,6 +84,20 @@ impl<T: Transport> Eth<T> {
         CallFuture::new(self.transport.execute("eth_estimateGas", args))
     }
 
+    /// Returns l1FeeRate (hex string), which is “wei per byte of state diff” for the block in base
+    /// layer. This lets you compute the L1 rollup fee directly as L1Fee = l1FeeRate * diffSize..
+    /// see https://gist.github.com/otaliptus/a54c9374bf32b874fb8ce4061dc66e01
+    pub fn estimate_diff_size(&self, req: CallRequest, block: Option<BlockNumber>) -> CallFuture<U256, T::Out> {
+        let req = helpers::serialize(&req);
+
+        let args = match block {
+            Some(block) => vec![req, helpers::serialize(&block)],
+            None => vec![req],
+        };
+
+        CallFuture::new(self.transport.execute("eth_estimateDiffSize", args))
+    }
+
     /// Get current recommended gas price
     pub fn gas_price(&self) -> CallFuture<U256, T::Out> {
         CallFuture::new(self.transport.execute("eth_gasPrice", vec![]))
