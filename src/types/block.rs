@@ -92,6 +92,9 @@ pub struct Block<TX> {
     /// Base fee per unit of gas (if past London)
     #[serde(rename = "baseFeePerGas", skip_serializing_if = "Option::is_none")]
     pub base_fee_per_gas: Option<U256>,
+    /// Citrea block exposes an L1 fee rate
+    #[serde(rename = "l1FeeRate", skip_serializing_if = "Option::is_none")]
+    pub l1_fee_rate: Option<U256>,
     /// Extra data
     #[serde(rename = "extraData")]
     pub extra_data: Bytes,
