@@ -6,8 +6,8 @@ use crate::{
     contract::tokens::{Detokenize, Tokenize},
     futures::Future,
     types::{
-        AccessList, Address, BlockId, Bytes, CallRequest, FilterBuilder, TransactionCondition, TransactionReceipt,
-        TransactionRequest, H256, U256, U64,
+        AccessList, Address, BlockId, Bytes, CallRequest, FilterBuilder, RollupGasEstimate, TransactionCondition,
+        TransactionReceipt, TransactionRequest, H256, U256, U64,
     },
     Transport,
 };
@@ -209,6 +209,37 @@ impl<T: Transport> Contract<T> {
         let data = self.abi.function(func)?.encode_input(&params.into_tokens())?;
         self.eth
             .estimate_gas(
+                CallRequest {
+                    from: Some(from),
+                    to: Some(self.address),
+                    gas: options.gas,
+                    gas_price: options.gas_price,
+                    value: options.value,
+                    data: Some(Bytes(data)),
+                    transaction_type: options.transaction_type,
+                    access_list: options.access_list,
+                    max_fee_per_gas: options.max_fee_per_gas,
+                    max_priority_fee_per_gas: options.max_priority_fee_per_gas,
+                },
+                None,
+            )
+            .await
+            .map_err(Into::into)
+    }
+
+    pub async fn estimate_diff_size<P>(
+        &self,
+        func: &str,
+        params: P,
+        from: Address,
+        options: Options,
+    ) -> Result<RollupGasEstimate>
+    where
+        P: Tokenize,
+    {
+        let data = self.abi.function(func)?.encode_input(&params.into_tokens())?;
+        self.eth
+            .estimate_diff_size(
                 CallRequest {
                     from: Some(from),
                     to: Some(self.address),
